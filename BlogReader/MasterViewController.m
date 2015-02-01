@@ -8,81 +8,190 @@
 
 #import "MasterViewController.h"
 #import "DetailViewController.h"
+#import "BlogPost.h"
+
+
 
 @interface MasterViewController ()
 
-@property NSMutableArray *objects;
 @end
 
-@implementation MasterViewController
-
-- (void)awakeFromNib {
-    [super awakeFromNib];
+@implementation MasterViewController {
+    NSArray *sectionTitles;
 }
 
-- (void)viewDidLoad {
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    self = [super initWithStyle:style];
+    if (self) {
+        // Custom initialization
+    
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    self.navigationItem.leftBarButtonItem = self.editButtonItem;
+    
+   // NSDictionary *dictionaryWOK = [NSDictionary dictionaryWithObjectsAndKeys:@"Hamlet",@"title", nil];
+    
+    NSURL *blogURL = [NSURL URLWithString:@"http://blog.teamtreehouse.com/api/get_recent_summary/"];
+    NSData *jsonData = [NSData dataWithContentsOfURL:blogURL];
+    NSError *error = nil;
+    NSDictionary *dataDictionary = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error];
+    NSLog(@"%@",dataDictionary);
+    
+    self.blogPosts = [NSMutableArray array];
+    
+    NSArray *blogPostsArray = [dataDictionary objectForKey:@"posts"];
+    
+    for (NSDictionary *bpDictionary in blogPostsArray) {
+        
+        BlogPost *blogPost = [BlogPost blogPostWithTitle:[bpDictionary objectForKey:@"title"]];
+        blogPost.author = [bpDictionary objectForKey:@"author"];
+        blogPost.thumbnail = [bpDictionary objectForKey:@"thumbnail"];
+        blogPost.date = [bpDictionary objectForKey:@"date"];
+        blogPost.url = [NSURL URLWithString:[bpDictionary objectForKey:@"url"]];
+        [self.blogPosts addObject:blogPost];
+    };
+    
+    //self.blogPosts = [dataDictionary objectForKey:@"posts"];
+    
+    
+    
+//    NSArray *booksArray = [NSArray arrayWithObjects:@"Hamlet",@"King Lear",@"Othello",@"Macbeth",nil];
+//    
+//    NSString *bookTitle = [booksArray objectAtIndex:2];
+//    
+//    [bookTitle uppercaseString];
+    
+    //Stage 4 - TH
+//    BlogPost *blogPost = [[BlogPost alloc]init];
+//    blogPost.title = @"Some title";
+//    blogPost.author= @"Some author";
 
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-    self.navigationItem.rightBarButtonItem = addButton;
+    sectionTitles = @[@"Treehouse Blogs"];
+ 
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (void)insertNewObject:(id)sender {
-    if (!self.objects) {
-        self.objects = [[NSMutableArray alloc] init];
-    }
-    [self.objects insertObject:[NSDate date] atIndex:0];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+#pragma mark - Table view data source
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    return [sectionTitles objectAtIndex:section];
 }
 
-#pragma mark - Segues
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:@"showDetail"]) {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSDate *object = self.objects[indexPath.row];
-        [[segue destinationViewController] setDetailItem:object];
-    }
+    // Return the number of sections.
+    return [sectionTitles count];
 }
 
-#pragma mark - Table View
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    // Return the number of rows in the section.
+    return [self.blogPosts count];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.objects.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-
-    NSDate *object = self.objects[indexPath.row];
-    cell.textLabel.text = [object description];
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    
+    BlogPost *blogPost = [self.blogPosts objectAtIndex:indexPath.row];
+    
+    if ([blogPost.thumbnail isKindOfClass:[NSString class]]) {
+        NSData *imageData = [NSData dataWithContentsOfURL:blogPost.thumbnailURL];
+        UIImage *image = [UIImage imageWithData:imageData];
+    
+        cell.imageView.image = image;
+        
+    } else {
+        cell.imageView.image = [UIImage imageNamed:@"treehouse.png"];
+    };
+    
+ 
+    cell.textLabel.text = blogPost.title;
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ - %@", blogPost.author, [blogPost formattedDate]];
+    
     return cell;
 }
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [self.objects removeObjectAtIndex:indexPath.row];
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
+/*
+ // Override to support conditional editing of the table view.
+ - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+ {
+ // Return NO if you do not want the specified item to be editable.
+ return YES;
+ }
+ */
+
+/*
+ // Override to support editing the table view.
+ - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+ {
+ if (editingStyle == UITableViewCellEditingStyleDelete) {
+ // Delete the row from the data source
+ [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+ }
+ else if (editingStyle == UITableViewCellEditingStyleInsert) {
+ // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+ }
+ }
+ */
+
+/*
+ // Override to support rearranging the table view.
+ - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+ {
+ }
+ */
+
+/*
+ // Override to support conditional rearranging of the table view.
+ - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+ {
+ // Return NO if you do not want the item to be re-orderable.
+ return YES;
+ }
+ */
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    NSLog(@"Prepare for segue: %@", segue.identifier);
+    
+    if ([segue.identifier isEqualToString:@"showDetail"]) {
+     
+            NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+            BlogPost *blogPost = [self.blogPosts objectAtIndex:indexPath.row];
+            DetailViewController *wbc = (DetailViewController *)segue.destinationViewController;
+            wbc.blogPostURL = blogPost.url;
+
+    
     }
+}
+#pragma mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+//    BlogPost *blogPost = [self.blogPosts objectAtIndex:indexPath.row];
+//    UIApplication *application = [UIApplication sharedApplication];
+//    [application openURL:blogPost.url];
+    
+    
+    // Navigation logic may go here. Create and push another view controller.
+    /*
+      *detailViewController = [[ alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
+     // ...
+     // Pass the selected object to the new view controller.
+     [self.navigationController pushViewController:detailViewController animated:YES];
+     */
 }
 
 @end

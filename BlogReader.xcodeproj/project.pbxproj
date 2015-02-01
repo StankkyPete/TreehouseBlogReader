@@ -15,6 +15,7 @@
 		D07BCA2E1A574B750097F15A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D07BCA2D1A574B750097F15A /* Images.xcassets */; };
 		D07BCA311A574B750097F15A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D07BCA2F1A574B750097F15A /* LaunchScreen.xib */; };
 		D07BCA3D1A574B760097F15A /* BlogReaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D07BCA3C1A574B760097F15A /* BlogReaderTests.m */; };
+		D0C07C7D1A57B62000437FE9 /* BlogPost.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C07C7C1A57B62000437FE9 /* BlogPost.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,8 @@
 		D07BCA361A574B760097F15A /* BlogReaderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlogReaderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D07BCA3B1A574B760097F15A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D07BCA3C1A574B760097F15A /* BlogReaderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BlogReaderTests.m; sourceTree = "<group>"; };
+		D0C07C7B1A57B62000437FE9 /* BlogPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlogPost.h; path = ../BlogPost.h; sourceTree = "<group>"; };
+		D0C07C7C1A57B62000437FE9 /* BlogPost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BlogPost.m; path = ../BlogPost.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +93,8 @@
 				D07BCA251A574B750097F15A /* MasterViewController.m */,
 				D07BCA271A574B750097F15A /* DetailViewController.h */,
 				D07BCA281A574B750097F15A /* DetailViewController.m */,
+				D0C07C7B1A57B62000437FE9 /* BlogPost.h */,
+				D0C07C7C1A57B62000437FE9 /* BlogPost.m */,
 				D07BCA2A1A574B750097F15A /* Main.storyboard */,
 				D07BCA2D1A574B750097F15A /* Images.xcassets */,
 				D07BCA2F1A574B750097F15A /* LaunchScreen.xib */,
@@ -226,6 +231,7 @@
 			files = (
 				D07BCA231A574B750097F15A /* AppDelegate.m in Sources */,
 				D07BCA261A574B750097F15A /* MasterViewController.m in Sources */,
+				D0C07C7D1A57B62000437FE9 /* BlogPost.m in Sources */,
 				D07BCA201A574B750097F15A /* main.m in Sources */,
 				D07BCA291A574B750097F15A /* DetailViewController.m in Sources */,
 			);
@@ -418,6 +424,7 @@
 				D07BCA421A574B760097F15A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D07BCA431A574B760097F15A /* Build configuration list for PBXNativeTarget "BlogReaderTests" */ = {
 			isa = XCConfigurationList;
@@ -426,6 +433,7 @@
 				D07BCA451A574B760097F15A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
